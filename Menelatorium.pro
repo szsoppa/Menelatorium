@@ -4,13 +4,15 @@ CONFIG -= app_bundle
 CONFIG -= qt
 
 SOURCES += main.cpp \
-    comunicator.cpp \
     lamport.cpp \
-    actor.cpp
+    actor.cpp \
+    menel.cpp \
+    communicator.cpp
 
 HEADERS += \
     headers.h \
-    comunicator.h \
     lamport.h \
-    actor.h
+    actor.h \
+    menel.h \
+    communicator.h
 
