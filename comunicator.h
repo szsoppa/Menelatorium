@@ -1,7 +1,9 @@
 #ifndef COMUNICATOR_H
 #define COMUNICATOR_H
 
-class Comunicator
+#include "actor.h"
+
+class Comunicator : public Actor
 {
 public:
     Comunicator();
