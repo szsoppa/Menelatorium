@@ -7,12 +7,15 @@ SOURCES += main.cpp \
     lamport.cpp \
     actor.cpp \
     menel.cpp \
-    communicator.cpp
+    communicator.cpp \
+    packet.cpp
 
 HEADERS += \
     headers.h \
     lamport.h \
     actor.h \
     menel.h \
-    communicator.h
+    communicator.h \
+    constants.h \
+    packet.h
 

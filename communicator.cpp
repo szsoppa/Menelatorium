@@ -8,7 +8,6 @@ void Communicator::send(int *buff, int count, int destiny , int tag, MPI_Comm co
 {
     MPI_Request req;
     increment_timestamp();
-    buff[0] = get_timestamp();
     MPI_Isend(buff, count, MPI_INT, destiny, tag, comm, &req);
     MPI_Request_free(&req);
 }
@@ -33,7 +32,6 @@ void Communicator::broadcast(int *buff, int count, int tag, MPI_Comm comm)
     MPI_Comm_size(comm, &size);
     MPI_Comm_rank(comm, &rank);
     increment_timestamp();
-    buff[0] = get_timestamp();
     for (int i=0; i<size; i++)
     {
         if (i==rank) continue;

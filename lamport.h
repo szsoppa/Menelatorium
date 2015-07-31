@@ -10,9 +10,9 @@ public:
     int timestamp;
     bool operator() (const Member &first, const Member &second)
     {
-        if (first.timestamp == -100)
+        if (first.timestamp == CONSTANT::NOT_PARTICIPATING)
             return false;
-        else if (second.timestamp == -100)
+        else if (second.timestamp == CONSTANT::NOT_PARTICIPATING)
             return true;
         else if (first.timestamp == second.timestamp)
             return first.id < second.id;
@@ -21,7 +21,7 @@ public:
     }
 };
 
-class Lamport : public Actor
+class Lamport : public virtual Actor
 {
 public:
     Lamport();
@@ -32,8 +32,8 @@ public:
     void print_list();
     unsigned int get_my_position();
     unsigned int get_id_by_position(unsigned int position);
-    unsigned int get_my_timestamp();
     unsigned int get_timestamp_by_id(unsigned int id);
+    bool enough_participants(unsigned int n);
     
 private:
     vector<Member> priority_list;

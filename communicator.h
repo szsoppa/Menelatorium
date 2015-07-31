@@ -3,7 +3,7 @@
 
 #include "actor.h"
 
-class Communicator : public Actor
+class Communicator : public virtual Actor
 {
 public:
     Communicator();

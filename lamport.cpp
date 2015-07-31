@@ -33,8 +33,16 @@ void Lamport::sort_list()
 
 void Lamport::print_list()
 {
-    for(unsigned int i=0; i<priority_list.size(); i++)
+    for (unsigned int i=0; i<priority_list.size(); i++)
         cout << "Proccess number " << priority_list[i].id << ", timestamp " << priority_list[i].timestamp <<", position " << i << endl;
+}
+
+unsigned int Lamport::get_my_position()
+{
+    for (unsigned int i=0; i<priority_list.size(); i++)
+        if (get_group_id() == priority_list[i].id) return i+1;
+
+    return -1;
 }
 
 unsigned int Lamport::get_id_by_position(unsigned int position)
@@ -42,16 +50,24 @@ unsigned int Lamport::get_id_by_position(unsigned int position)
     return this->priority_list[position].id;
 }
 
-unsigned int Lamport::get_my_timestamp()
-{
-    return get_timestamp();
-}
-
 unsigned int Lamport::get_timestamp_by_id(unsigned int id)
 {
-    for(unsigned int i=0; i<priority_list.size(); i++)
+    for (unsigned int i=0; i<priority_list.size(); i++)
         if(priority_list[i].id == id) return priority_list[i].timestamp;
 
     return -1;
+}
+
+bool Lamport::enough_participants(unsigned int n)
+{
+    for (unsigned int i=0; i<priority_list.size(); i++)
+        if (priority_list[i].timestamp == CONSTANT::NOT_PARTICIPATING)
+        {
+            if (i+1 > n)
+                return true;
+            else
+                return false;
+        }
+    return true;
 }
 
