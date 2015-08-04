@@ -99,11 +99,15 @@ void Menel::enter_exhibition()
     vomit();
     say_some_dayum();
 
+    p.set_timestamp(get_timestamp());
+    p.set_message(this->weight);
     if (get_random(0, 1))
     {
         broadcast(p.get(), p.get_size(), MENEL::DRUNK, COMM_WORLD);
         read_by_tag(STAFF::HELP);
     }
+    else
+        broadcast(p.get(), p.get_size(), MENEL::NOT_DRUNK, COMM_WORLD);
 }
 
 int Menel::get_random(int lower, int upper)

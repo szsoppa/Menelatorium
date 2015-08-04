@@ -9,7 +9,8 @@ SOURCES += main.cpp \
     menel.cpp \
     communicator.cpp \
     packet.cpp \
-    management.cpp
+    management.cpp \
+    staff.cpp
 
 HEADERS += \
     headers.h \
@@ -19,5 +20,6 @@ HEADERS += \
     communicator.h \
     constants.h \
     packet.h \
-    management.h
+    management.h \
+    staff.h
 

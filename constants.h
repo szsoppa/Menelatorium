@@ -12,6 +12,7 @@ namespace MENEL
 {
     int const TIMESTAMP = 10;
     int const DRUNK = 11;
+    int const NOT_DRUNK = 12;
 }
 
 namespace MANAGEMENT
@@ -23,7 +24,7 @@ namespace MANAGEMENT
 
 namespace STAFF
 {
-
+    int const HELP = 30;
 }
 
 namespace CONSTANT
