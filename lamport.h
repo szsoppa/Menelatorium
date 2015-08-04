@@ -30,9 +30,9 @@ public:
     void update_my_timestamp(int timestamp);
     void sort_list();
     void print_list();
-    unsigned int get_my_position();
-    unsigned int get_id_by_position(unsigned int position);
-    unsigned int get_timestamp_by_id(unsigned int id);
+    int get_my_position();
+    int get_id_by_position(unsigned int position);
+    int get_timestamp_by_id(unsigned int id);
     bool enough_participants(unsigned int n);
     
 private:

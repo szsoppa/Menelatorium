@@ -37,7 +37,7 @@ void Lamport::print_list()
         cout << "Proccess number " << priority_list[i].id << ", timestamp " << priority_list[i].timestamp <<", position " << i << endl;
 }
 
-unsigned int Lamport::get_my_position()
+int Lamport::get_my_position()
 {
     for (unsigned int i=0; i<priority_list.size(); i++)
         if (get_group_id() == priority_list[i].id) return i+1;
@@ -45,12 +45,12 @@ unsigned int Lamport::get_my_position()
     return -1;
 }
 
-unsigned int Lamport::get_id_by_position(unsigned int position)
+int Lamport::get_id_by_position(unsigned int position)
 {
     return this->priority_list[position].id;
 }
 
-unsigned int Lamport::get_timestamp_by_id(unsigned int id)
+int Lamport::get_timestamp_by_id(unsigned int id)
 {
     for (unsigned int i=0; i<priority_list.size(); i++)
         if(priority_list[i].id == id) return priority_list[i].timestamp;
