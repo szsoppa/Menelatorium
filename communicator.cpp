@@ -43,3 +43,15 @@ void Communicator::increment_timestamp()
 {
     set_timestamp(get_timestamp()+1);
 }
+
+void Communicator::save_message(int *buff, int source)
+{
+    ostringstream ss, ss2;
+    ss << get_group_id();
+    ofstream myfile;
+    myfile.open ("data/"+ss.str()+".txt", ios::app);
+    ss << source;
+    ss2 << buff[0];
+    myfile << "From " << ss.str() << " timestamp: " << ss2.str() << endl;
+    myfile.close();
+}

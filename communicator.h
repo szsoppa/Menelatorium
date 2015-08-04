@@ -13,6 +13,7 @@ public:
     void broadcast(int *buff, int count, int tag, MPI_Comm comm);
 private:
     void increment_timestamp();
+    void save_message(int *buff, int source);
 };
 
 #endif // COMUNICATOR_H

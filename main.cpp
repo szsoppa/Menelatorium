@@ -1,4 +1,5 @@
 #include "menel.h"
+#include "management.h"
 
 MPI_Comm COMM_MENELS, COMM_STAFF;
 MPI_Group GROUP_WORLD, GROUP_MENELS, GROUP_STAFF;
@@ -71,11 +72,13 @@ int main(int argc, char** argv)
         }
         case ACTORS::STAFF:
         {
-
+            break;
         }
         case ACTORS::MANAGEMENT:
         {
-
+            Management g(positions_number, MPI_COMM_WORLD);
+            g.set_world_id(id);
+            g.participate();
         }
         default:
             break;

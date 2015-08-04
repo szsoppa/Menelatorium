@@ -8,7 +8,8 @@ SOURCES += main.cpp \
     actor.cpp \
     menel.cpp \
     communicator.cpp \
-    packet.cpp
+    packet.cpp \
+    management.cpp
 
 HEADERS += \
     headers.h \
@@ -17,5 +18,6 @@ HEADERS += \
     menel.h \
     communicator.h \
     constants.h \
-    packet.h
+    packet.h \
+    management.h
 

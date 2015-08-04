@@ -26,6 +26,9 @@ private:
     void enter_exhibition();
     void read_by_tag(int tag);
     int get_random(int lower, int upper);
+    void drink_some_vodka();
+    void vomit();
+    void say_some_dayum();
 };
 
 #endif // MENEL_H

@@ -11,6 +11,7 @@ namespace ACTORS
 namespace MENEL
 {
     int const TIMESTAMP = 10;
+    int const DRUNK = 11;
 }
 
 namespace MANAGEMENT
@@ -18,6 +19,11 @@ namespace MANAGEMENT
     int const LAST_MENEL_IN = 20;
     int const OPEN_EXHIBITION = 21;
     int const END_OF_EXHIBITION = 22;
+}
+
+namespace STAFF
+{
+
 }
 
 namespace CONSTANT
