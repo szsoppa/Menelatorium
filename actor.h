@@ -11,14 +11,14 @@ public:
     Actor();
 
     void set_world_id(unsigned int id);
-    unsigned int get_world_id();
+    int get_world_id();
     void set_group_id(unsigned int id);
-    unsigned int get_group_id();
+    int get_group_id();
     void set_timestamp(int timestamp);
     int get_timestamp();
 private:
-    unsigned int world_id;
-    unsigned int group_id;
+    int world_id;
+    int group_id;
     int timestamp;
 };
 

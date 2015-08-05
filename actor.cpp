@@ -10,7 +10,7 @@ void Actor::set_world_id(unsigned int id)
     this->world_id = id;
 }
 
-unsigned int Actor::get_world_id()
+int Actor::get_world_id()
 {
     return this->world_id;
 }
@@ -20,7 +20,7 @@ void Actor::set_group_id(unsigned int id)
     this->group_id = id;
 }
 
-unsigned int Actor::get_group_id()
+int Actor::get_group_id()
 {
     return this->group_id;
 }

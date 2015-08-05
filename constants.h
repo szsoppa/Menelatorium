@@ -25,6 +25,7 @@ namespace MANAGEMENT
 namespace STAFF
 {
     int const HELP = 30;
+    int const TIMESTAMP = 31;
 }
 
 namespace CONSTANT
