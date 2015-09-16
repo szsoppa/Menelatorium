@@ -15,6 +15,14 @@ void Lamport::init_priority_list(vector<int> list)
     }
 }
 
+void Lamport::add(int id)
+{
+    Member m;
+    m.id = id;
+    m.timestamp = 0;
+    priority_list.push_back(m);
+}
+
 void Lamport::update_other_timestamp(unsigned int id, int timestamp)
 {
     for(unsigned int i=0; i<priority_list.size(); i++)
@@ -26,9 +34,37 @@ void Lamport::update_my_timestamp(int timestamp)
     set_timestamp(timestamp);
 }
 
+bool lamport_sort(const Member &first, const Member &second)
+{
+    if (first.timestamp == CONSTANT::NOT_PARTICIPATING)
+        return false;
+    else if (second.timestamp == CONSTANT::NOT_PARTICIPATING)
+        return true;
+    else if (first.timestamp == second.timestamp)
+        return first.id < second.id;
+    else
+        return first.timestamp < second.timestamp;
+}
+
+bool id_sort(const Member &first, const Member &second)
+{
+  if (first.timestamp == CONSTANT::NOT_PARTICIPATING)
+      return false;
+  else if (second.timestamp == CONSTANT::NOT_PARTICIPATING)
+      return true;
+  else
+      return first.id < second.id;
+
+}
+
 void Lamport::sort_list()
 {
-    sort (this->priority_list.begin(), this->priority_list.end(), Member());
+    sort (this->priority_list.begin(), this->priority_list.end(), lamport_sort);
+}
+
+void Lamport::sort_list_by_id()
+{
+  sort (this->priority_list.begin(), this->priority_list.end(), id_sort);
 }
 
 void Lamport::print_list()
@@ -63,7 +99,7 @@ bool Lamport::enough_participants(unsigned int n)
     for (unsigned int i=0; i<priority_list.size(); i++)
         if (priority_list[i].timestamp == CONSTANT::NOT_PARTICIPATING)
         {
-            if (i+1 > n)
+            if (i >= n)
                 return true;
             else
                 return false;
@@ -71,3 +107,21 @@ bool Lamport::enough_participants(unsigned int n)
     return true;
 }
 
+int Lamport::active_participants_count()
+{
+  for (unsigned int i=0; i<priority_list.size(); i++)
+      if (priority_list[i].timestamp == CONSTANT::NOT_PARTICIPATING)
+      {
+        return i;
+      }
+      return priority_list.size();
+}
+
+int Lamport::size()
+{
+  return priority_list.size();
+}
+
+void Lamport::clear(){
+  priority_list.clear();
+}

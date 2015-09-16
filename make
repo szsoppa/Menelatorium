@@ -1,1 +1,1 @@
-mpic++ *.cpp -o menelatorium -Wall -std=c++11
+mpic++ *.cpp -g -o menelatorium -Wall -std=c++11

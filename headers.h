@@ -14,6 +14,7 @@
 #include <random>
 #include <cmath>
 #include <fstream>
+#include <deque>
 
 using namespace std;
 

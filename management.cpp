@@ -18,6 +18,15 @@ void Management::participate()
         cout << "Odebralem" << endl;
         p.set(get_timestamp(), 1);
         broadcast(p.get(), p.get_size(), MANAGEMENT::OPEN_EXHIBITION, COMM_WORLD);
+
+
+
+        for (int i=0; i<5; i++){
+          read(p.get(), p.get_size(), MPI_ANY_SOURCE, STAFF::CONSENSUS, COMM_WORLD, &mess_status);
+        }
+        cout << "----------------- all menels out " << endl;
         broadcast(p.get(), p.get_size(), MANAGEMENT::END_OF_EXHIBITION, COMM_WORLD);
+
+
     }
 }

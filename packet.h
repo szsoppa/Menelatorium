@@ -14,6 +14,9 @@ public:
     int get_timestamp();
     int get_message();
     int get_size();
+    int get_data(int position);
+    void set_data(int position, int value);
+    void clear_data();
     int *get();
 
 private:

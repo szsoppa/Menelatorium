@@ -1,4 +1,5 @@
 #include "menel.h"
+#include "staff.h"
 #include "management.h"
 
 MPI_Comm COMM_MENELS, COMM_STAFF;
@@ -74,10 +75,13 @@ int main(int argc, char** argv)
         {
             int staff_id;
             MPI_Comm_rank(COMM_STAFF, &staff_id);
-            Menel s(positions_number, MPI_COMM_WORLD, COMM_STAFF);
+            Staff s(positions_number, MPI_COMM_WORLD, COMM_STAFF);
             s.set_world_id(id);
             s.set_group_id(staff_id);
+
             s.participate();
+
+
             break;
         }
         case ACTORS::MANAGEMENT:

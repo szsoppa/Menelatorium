@@ -14,6 +14,7 @@ Menel::Menel(int positions_number, MPI_Comm COMM_WORLD, MPI_Comm COMM_MENELS)
     MPI_Comm_size(this->COMM_WORLD, &world_group_size);
     management_id = world_group_size - 1;
     for (int i=0; i<this->menel_group_size; i++) this->menels.push_back(i);
+
 }
 
 void Menel::participate()
@@ -24,6 +25,7 @@ void Menel::participate()
     init_priority_list(menels);
     while (true)
     {
+
         counter++;
         if (get_random(1,50) > 45)
             participate = false;
@@ -37,12 +39,17 @@ void Menel::participate()
 
         update_other_timestamp(get_group_id(), menel_timestamp);
         p.set(menel_timestamp, CONSTANT::NOT_IMPORTANT);
+
         broadcast(p.get(), p.get_size(), MENEL::TIMESTAMP , this->COMM_MENELS);
+
         read_by_tag(MENEL::TIMESTAMP);
         sort_list();
-        if (!enough_participants(positions_number)) continue;
+        if (!enough_participants(positions_number)){
+          continue;
+        }
         if (participate && get_my_position() <= positions_number)
         {
+
             cout << "Proces " << get_group_id() << ", iteracja "<<counter<<", wszedlem do sekcji"<<endl;
             if (get_my_position() == positions_number)
             {
@@ -81,6 +88,8 @@ void Menel::read_by_tag(int tag)
             {
                 read(p.get(), p.get_size(), MPI_ANY_SOURCE, STAFF::HELP, COMM_WORLD);
             }
+            //cout << "menel out " << endl;
+            //send(p.get(), p.get_size(), management_id, MENEL::OUT, this->COMM_WORLD);
             break;
         }
     }
@@ -99,15 +108,21 @@ void Menel::enter_exhibition()
     vomit();
     say_some_dayum();
 
-    p.set_timestamp(get_timestamp());
-    p.set_message(this->weight);
-    if (get_random(0, 1))
+    p.set_timestamp(this->weight);
+
+    if (true)//get_random(0, 1))
     {
-        broadcast(p.get(), p.get_size(), MENEL::DRUNK, COMM_WORLD);
+      //cout << "im drunk " << endl;
+        p.set(this->weight, MENEL::DRUNK);
+        //p.set_message(MENEL::DRUNK);
+        broadcast(p.get(), p.get_size(), MENEL::STATE, COMM_WORLD);
         read_by_tag(STAFF::HELP);
     }
-    else
-        broadcast(p.get(), p.get_size(), MENEL::NOT_DRUNK, COMM_WORLD);
+    else{
+        p.set(this->weight, MENEL::NOT_DRUNK);
+        //p.set_message(MENEL::NOT_DRUNK);
+        broadcast(p.get(), p.get_size(), MENEL::STATE, COMM_WORLD);
+      }
 }
 
 int Menel::get_random(int lower, int upper)
