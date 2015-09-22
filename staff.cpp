@@ -173,10 +173,10 @@ void Staff::gather_info()
   remaining_requests = drunk_list[0].weight - (my_group.size()+1);
   remaining_consensus_requests = remaining_requests*(my_group.size());
 
-  cout << get_timestamp() <<"  -- it" << this->iteration << " I am " << get_group_id() << " and REQUESTING_ADDITIONAL " << remaining_requests << " to take out " << drunk_list[0].id << " WHO weights "<< drunk_list[0].weight;
+  cout << get_timestamp() <<"  -- " << this->iteration << " Proces " << get_group_id() << " i dobieram dodatkowych " << remaining_requests << " do " << drunk_list[0].id << " ktory wazy "<< drunk_list[0].weight;
 
 
-  cout << " MY Group = ";
+  cout << " Moja grupa to = ";
   for(unsigned int i=0; i<my_group.size(); i++){
     cout << " " << my_group[i];
   }
@@ -242,6 +242,7 @@ void Staff::listen()
 
             break;
             }
+            //cout << get_timestamp() <<"  -- " << this->iteration << " Jestem " << get_group_id() << " otrzymalem rządanie timestampa od " << message_status.MPI_SOURCE << endl;
 
             p.set(get_timestamp(), STAFF::TIMESTAMP);
             p.set_data(2, this->iteration);
@@ -261,6 +262,8 @@ void Staff::listen()
 
 
     case STAFF::TIMESTAMP:{
+      //cout << get_timestamp() <<"  -- " << this->iteration << " Jestem " << get_group_id() << " otrzymalem timestamp od " << message_status.MPI_SOURCE;
+
         if(p.get_data(2)!=this->iteration){
 
         break;
@@ -278,6 +281,7 @@ void Staff::listen()
     read(p.get(), p.get_size(), MPI_ANY_SOURCE, STAFF::CONSENSUS, COMM_STAFF, &message_status);
       switch (p.get_message()) {
         case STAFF::CONSENSUS:
+        //cout << get_timestamp() <<"  -- " << this->iteration << " Jestem " << get_group_id() << " otrzymalem informacje od innego dobierajacego" << message_status.MPI_SOURCE << endl;
 
           consensus_data_exchange(p.get_timestamp(), p.get_data(2));
           break;
@@ -353,7 +357,7 @@ void Staff::seek_consensus()
 
 void Staff::take_menel_out(int target)
 {
-  cout << get_timestamp() <<"  -- it " << this->iteration << " I am " << get_group_id() << " and LEAVING_FOR " << drunk_list[0].id << " WHO WEIGHTS " << drunk_list[0].weight << endl;
+  cout << get_timestamp() <<"  -- it " << this->iteration << " Proces " << get_group_id() << " I wychodze po " << drunk_list[0].id << " ktory wazy " << drunk_list[0].weight << endl;
 
 
   p.set(get_timestamp(), STAFF::HELP);
@@ -524,6 +528,7 @@ void Staff::update_group_info(int additional_group_members){
 
     }
     }
+  cout << get_timestamp() <<"  -- " << this->iteration << " Jestem " << get_group_id() << " i zostalem dobrany do wyniesienia  " << target_menel_id  << endl;
 
   take_menel_out(target_menel_id);
 
