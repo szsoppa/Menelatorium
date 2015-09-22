@@ -34,7 +34,7 @@ private:
   vector<int> staff;
   vector<int> colors;
 
-  deque<Menel_request> drunk_retards;
+  deque<Menel_request> drunk_list;
   MPI_Comm COMM_STAFF, COMM_WORLD;
   Packet p;
 
