@@ -25,7 +25,6 @@ void Menel::participate()
     init_priority_list(menels);
     while (true)
     {
-
         counter++;
         if (get_random(1,50) > 45)
             participate = false;
@@ -49,18 +48,18 @@ void Menel::participate()
         }
         if (participate && get_my_position() <= positions_number)
         {
-
-            cout << "Proces " << get_group_id() << ", iteracja "<<counter<<", wszedlem do sekcji"<<endl;
+            cout << get_timestamp() << " -- " "Proces " << get_group_id() << ", iteracja "<<counter<<", wszedlem do sekcji krytycznej" << endl;
             if (get_my_position() == positions_number)
             {
                 p.set(get_timestamp(), 1);
                 send(p.get(), p.get_size(), management_id, MANAGEMENT::LAST_MENEL_IN, COMM_WORLD);
-                cout << "-"<<"Proces nr "<<get_group_id()<<", iteracja: "<<counter<<", wyslalem do procesu " << management_id << "-" << endl;
+                cout << get_timestamp() << " -- " <<"Proces "<<get_group_id()<<", iteracja: "<<counter<<", wyslalem do procesu " << management_id << endl;
             }
             enter_exhibition();
         }
         else
         {
+            cout << get_timestamp() << " -- " "Proces " << get_group_id() << ", iteracja "<<counter<<", nie wszedlem do sekcji krytycznej" << endl;
             read(p.get(), p.get_size(), management_id, MANAGEMENT::OPEN_EXHIBITION, COMM_WORLD);
         }
         read(p.get(), p.get_size(), management_id, MANAGEMENT::END_OF_EXHIBITION, COMM_WORLD);
@@ -79,6 +78,7 @@ void Menel::read_by_tag(int tag)
                 if (get_group_id() == i) continue;
                 read(p.get(), p.get_size(), i, MENEL::TIMESTAMP, COMM_MENELS, &message_status);
                 update_other_timestamp(message_status.MPI_SOURCE, p.get_timestamp());
+                cout << get_timestamp() << " -- " << "Proces " << get_group_id() << " otrzymalem timestamp " << p.get_timestamp() << " od procesu " << message_status.MPI_SOURCE << endl;
             }
             break;
         }
@@ -87,9 +87,8 @@ void Menel::read_by_tag(int tag)
             for (int i=0; i<this->weight; i++)
             {
                 read(p.get(), p.get_size(), MPI_ANY_SOURCE, STAFF::HELP, COMM_WORLD);
+                cout << get_timestamp() << " -- " "Proces " << get_group_id() << " otrzymalem wiadomosc od staffu ze zostane wyniesiony" << endl;
             }
-            //cout << "menel out " << endl;
-            //send(p.get(), p.get_size(), management_id, MENEL::OUT, this->COMM_WORLD);
             break;
         }
     }
@@ -116,12 +115,14 @@ void Menel::enter_exhibition()
         p.set(this->weight, MENEL::DRUNK);
         //p.set_message(MENEL::DRUNK);
         broadcast(p.get(), p.get_size(), MENEL::STATE, COMM_WORLD);
+        cout << get_timestamp() << " -- " "Proces " << get_group_id() << " wyslalem wiadomosc ze jestem pijany" << endl;
         read_by_tag(STAFF::HELP);
     }
     else{
         p.set(this->weight, MENEL::NOT_DRUNK);
         //p.set_message(MENEL::NOT_DRUNK);
         broadcast(p.get(), p.get_size(), MENEL::STATE, COMM_WORLD);
+        cout << get_timestamp() << " -- " "Proces " << get_group_id() << " wyslalem wiadomosc ze nie jestem pijany" << endl;
       }
 }
 
