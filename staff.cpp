@@ -41,7 +41,7 @@ void Staff::get_menels_status()
         m.id = message_status.MPI_SOURCE;
         m.weight = p.get_timestamp();
         m.destroy_count = p.get_timestamp();
-        drunk_retards.push_back(m);
+        drunk_list.push_back(m);
 
       }
 
@@ -49,9 +49,9 @@ void Staff::get_menels_status()
 
 
   }
-  sort (drunk_retards.begin(), drunk_retards.end(), sort_asc);
+  sort (drunk_list.begin(), drunk_list.end(), sort_asc);
 
-  //cout << "MENEL LIST SIZE " << drunk_retards.size() << endl;
+  //cout << "MENEL LIST SIZE " << drunk_list.size() << endl;
 
 }
 
@@ -69,7 +69,7 @@ void Staff::participate()
 
 
 
-  drunk_retards.clear();
+  drunk_list.clear();
   get_menels_status();
 
   set_all_to_white();
@@ -89,8 +89,8 @@ void Staff::participate()
       read(p.get(), p.get_size(), i, STAFF::TIMESTAMP, COMM_STAFF, &message_status);
       update_other_timestamp(message_status.MPI_SOURCE, p.get_timestamp());
   }
-  //cout << "timestamps OK " << endl;
-  while(drunk_retards.size()>0){
+
+  while(drunk_list.size()>0){
 
     sort_list_by_id();
 
@@ -98,7 +98,7 @@ void Staff::participate()
         gather_info();
       }
 
-    if(drunk_retards.size()>0){
+    if(drunk_list.size()>0){
       listen();
     }
 
@@ -115,15 +115,15 @@ void Staff::participate()
 void Staff::gather_info()
 {
   bool stop = false;
-  while(stop == false && drunk_retards.size()>0){
+  while(stop == false && drunk_list.size()>0){
     sort_list_by_id();
-    if(enough_participants(drunk_retards[0].weight))
+    if(enough_participants(drunk_list[0].weight))
     {
-      if(get_my_position()<=drunk_retards[0].weight){
+      if(get_my_position()<=drunk_list[0].weight){
 
         set_all_to_white();
 
-        for(int i=0; i<drunk_retards[0].weight; i++)
+        for(int i=0; i<drunk_list[0].weight; i++)
         {
           int id = get_id_by_position(i);
           color(id, STAFF::GREEN);
@@ -132,29 +132,24 @@ void Staff::gather_info()
         p.set(get_timestamp(), STAFF::LEAVING_FOR);
         p.set_data(2, this->iteration);
 
-        broadcast(p.get(), p.get_size(), drunk_retards[0].id+100, this->COMM_STAFF);
+        broadcast(p.get(), p.get_size(), drunk_list[0].id+100, this->COMM_STAFF);
 
-      /*  for(int i=0; i<drunk_retards[0].weight-1; i++)
-        {
-          read(p.get(), p.get_size(), MPI_ANY_SOURCE, drunk_retards[0].id+100, this->COMM_STAFF);
 
-        }
-*/
-        take_menel_out(drunk_retards[0].id);
+        take_menel_out(drunk_list[0].id);
 
 
         return;
       }
       else
       {
-        for(int i=0; i<drunk_retards[0].weight; i++)
+        for(int i=0; i<drunk_list[0].weight; i++)
         {
           int id = get_id_by_position(i);
           update_other_timestamp(id, CONSTANT::NOT_PARTICIPATING);
-          //read(p.get(), p.get_size(), id, drunk_retards[0].id+100, this->COMM_STAFF);
+
 
         }
-        remove_menel(drunk_retards[0].id);
+        remove_menel(drunk_list[0].id);
 
       }
 
@@ -173,12 +168,12 @@ void Staff::gather_info()
     my_group.push_back(id);
   }
 
-  target_menel_id = drunk_retards[0].id;
-  target_menel_weight = drunk_retards[0].weight;
-  remaining_requests = drunk_retards[0].weight - (my_group.size()+1);
+  target_menel_id = drunk_list[0].id;
+  target_menel_weight = drunk_list[0].weight;
+  remaining_requests = drunk_list[0].weight - (my_group.size()+1);
   remaining_consensus_requests = remaining_requests*(my_group.size());
 
-  cout << get_timestamp() <<"  -- it" << this->iteration << " I am " << get_group_id() << " and REQUESTING_ADDITIONAL " << remaining_requests << " to take out " << drunk_retards[0].id << " WHO weights "<< drunk_retards[0].weight;
+  cout << get_timestamp() <<"  -- it" << this->iteration << " I am " << get_group_id() << " and REQUESTING_ADDITIONAL " << remaining_requests << " to take out " << drunk_list[0].id << " WHO weights "<< drunk_list[0].weight;
 
 
   cout << " MY Group = ";
@@ -224,16 +219,16 @@ void Staff::listen()
 
       case STAFF::LEAVING_FOR:{
         if(p.get_data(2)!=this->iteration){
-        cout << " WRONG ITERATION LEAVING" << endl;
+
         break;
         }
         lm_count++;
         color(message_status.MPI_SOURCE, STAFF::RED);
         update_other_timestamp(message_status.MPI_SOURCE, p.get_timestamp());
-        //update_other_timestamp(message_status.MPI_SOURCE, CONSTANT::NOT_PARTICIPATING);
+
         if(lm_count == target_menel_weight){
 
-            //cout << "--- id : "<< get_group_id() << " pending end on " << target_menel_id << " _whites count "<< count_whites() << endl;
+
 
           update_iteration(this->target_menel_id, message_status.MPI_SOURCE);
         }
@@ -244,7 +239,7 @@ void Staff::listen()
           if (get_color(get_group_id())==STAFF::GREEN && get_color(message_status.MPI_SOURCE)!=STAFF::GREEN){
 
             if(p.get_data(2)!=this->iteration){
-            cout << " WRONG ITERATION " << endl;
+
             break;
             }
 
@@ -267,7 +262,7 @@ void Staff::listen()
 
     case STAFF::TIMESTAMP:{
         if(p.get_data(2)!=this->iteration){
-        cout << " WRONG ITERATION " << endl;
+
         break;
         }
         timestamp_request(message_status.MPI_SOURCE, p.get_timestamp());
@@ -283,7 +278,7 @@ void Staff::listen()
     read(p.get(), p.get_size(), MPI_ANY_SOURCE, STAFF::CONSENSUS, COMM_STAFF, &message_status);
       switch (p.get_message()) {
         case STAFF::CONSENSUS:
-          //cout << "--- id: " << get_group_id() << " got CONSENSUS data from " << message_status.MPI_SOURCE << " about " << p.get_timestamp() << endl;
+
           consensus_data_exchange(p.get_timestamp(), p.get_data(2));
           break;
       }
@@ -294,10 +289,10 @@ void Staff::listen()
 
 void Staff::timestamp_request(int source, int timestamp)
 {
-//  cout << " TIMESTAMP REQUEST " << endl;;
+
   if(this->my_status==STAFF::REQUESTING_ADDITIONAL){
     if (requests_lamport.get_timestamp_by_id(source)!=-1){
-      //cout << "ALREADY GOT THAT " << endl;
+
       return;
     }
     remaining_requests--;
@@ -358,7 +353,7 @@ void Staff::seek_consensus()
 
 void Staff::take_menel_out(int target)
 {
-  cout << get_timestamp() <<"  -- it " << this->iteration << " I am " << get_group_id() << " and LEAVING_FOR " << drunk_retards[0].id << " WHO WEIGHTS " << drunk_retards[0].weight << endl;
+  cout << get_timestamp() <<"  -- it " << this->iteration << " I am " << get_group_id() << " and LEAVING_FOR " << drunk_list[0].id << " WHO WEIGHTS " << drunk_list[0].weight << endl;
 
 
   p.set(get_timestamp(), STAFF::HELP);
@@ -371,19 +366,26 @@ void Staff::take_menel_out(int target)
   update_other_timestamp(get_group_id(), get_timestamp());
 
 
-  if(drunk_retards.size()>0){
+  if(drunk_list.size()>0){
     this->my_status = STAFF::PENDING;
-    this->target_menel_id = drunk_retards[0].id;
-    this->target_menel_weight = drunk_retards[0].weight;
+    this->target_menel_id = drunk_list[0].id;
+    this->target_menel_weight = drunk_list[0].weight;
     lm_count=0;
     acc_count=0;
 
   }else{
     this->my_status = STAFF::NORMAL;
+    return;
   }
 
+  if(count_whites()==0 && drunk_list.size()>0 && staff_group_size==4){
+    set_all_to_white();
+    sort_list_by_id();
+    my_status = STAFF::NORMAL;
 
-  //cout << "--- id : "<< get_group_id() << " pending start on " << target_menel_id << " " << endl;
+
+    return;
+  }
 
 }
 
@@ -397,7 +399,7 @@ void Staff::clear_iteration_data()
 void Staff::decide(){
 
   requests_lamport.sort_list_by_id();
-  int needed = drunk_retards[0].weight - (my_group.size()+1);
+  int needed = drunk_list[0].weight - (my_group.size()+1);
   int a = my_group.size()+1;
 
   for(int i=0; i<needed; i++)
@@ -408,7 +410,7 @@ void Staff::decide(){
     p.set(get_timestamp(), STAFF::ACCEPTED);
     p.set_data(2, a);
 
-    //cout <<" ____"  << get_group_id() <<  " DECIDED ON " << requests_lamport.get_id_by_position(i) << endl;
+
 
     send(p.get(),p.get_size(), requests_lamport.get_id_by_position(i), target_menel_id+100, this->COMM_STAFF);
 
@@ -428,13 +430,13 @@ void Staff::decide(){
   p.set_data(2, this->iteration);
   broadcast(p.get(), p.get_size(), target_menel_id+100, this->COMM_STAFF);
 
-  take_menel_out(drunk_retards[0].id);
+  take_menel_out(drunk_list[0].id);
 }
 
 void Staff::update_iteration(int target, int source){
 
   remove_menel(target);
-  //cout << "upd" << endl;
+
 
   for(int i=0; i<staff_group_size; i++){
     if(get_color(i)==STAFF::RED){
@@ -443,20 +445,20 @@ void Staff::update_iteration(int target, int source){
     }
   }
 
-  if(drunk_retards.size()>0){
+  if(drunk_list.size()>0){
 
-    this->target_menel_id = drunk_retards[0].id;
-    this->target_menel_weight = drunk_retards[0].weight;
+    this->target_menel_id = drunk_list[0].id;
+    this->target_menel_weight = drunk_list[0].weight;
     lm_count=0;
     acc_count=0;
 
   }
 
-  if(count_whites()==0 && drunk_retards.size()>0){
+  if(count_whites()==0 && drunk_list.size()>0){
     set_all_to_white();
     sort_list_by_id();
     my_status = STAFF::NORMAL;
-    //cout << "rev" << endl;
+
 
     return;
   }
@@ -484,7 +486,7 @@ void Staff::update_group_info(int additional_group_members){
 
       if(find(my_group.begin(),my_group.end(), message_status.MPI_SOURCE)==my_group.end()){
         my_group.push_back(message_status.MPI_SOURCE);
-        //update_other_timestamp(message_status.MPI_SOURCE,p.get_timestamp());
+
       }
 
     }
@@ -499,7 +501,7 @@ void Staff::update_group_info(int additional_group_members){
     if(get_color(i)==STAFF::RED){
       if(find(my_group.begin(),my_group.end(), i)==my_group.end()){
         my_group.push_back(i);
-        //cout << " push back red " << endl;
+
     }
 
   }
@@ -533,11 +535,11 @@ void Staff::update_group_info(int additional_group_members){
 }
 
 int Staff::remove_menel(int id){
-  for(unsigned int i=0; i<drunk_retards.size(); i++){
-    if (drunk_retards[i].id == id)
+  for(unsigned int i=0; i<drunk_list.size(); i++){
+    if (drunk_list[i].id == id)
     {
-      int weight = drunk_retards[i].weight;
-      drunk_retards.erase(drunk_retards.begin()+i);
+      int weight = drunk_list[i].weight;
+      drunk_list.erase(drunk_list.begin()+i);
 
       return weight;
 
@@ -548,9 +550,9 @@ int Staff::remove_menel(int id){
 }
 
 int Staff::get_menel_weight(int id){
-  for(unsigned int i=0; i<drunk_retards.size(); i++){
-    if (drunk_retards[i].id == id)
-    { return drunk_retards[i].weight;}
+  for(unsigned int i=0; i<drunk_list.size(); i++){
+    if (drunk_list[i].id == id)
+    { return drunk_list[i].weight;}
   }
   return -1;
 }
@@ -582,8 +584,8 @@ void Staff::force_timestamps(){
 }
 
 bool Staff::menel_exists(int id){
-  for(unsigned int i=0; i<drunk_retards.size(); i++){
-    if (drunk_retards[i].id == id) return true;
+  for(unsigned int i=0; i<drunk_list.size(); i++){
+    if (drunk_list[i].id == id) return true;
   }
 
   return false;
